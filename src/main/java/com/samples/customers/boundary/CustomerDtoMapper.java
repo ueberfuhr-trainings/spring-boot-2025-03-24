@@ -3,21 +3,14 @@ package com.samples.customers.boundary;
 import com.samples.customers.domain.Customer;
 import com.samples.customers.domain.CustomerState;
 import jakarta.validation.ValidationException;
-import org.springframework.stereotype.Component;
+import org.mapstruct.Mapper;
 
-@Component
-public class CustomerDtoMapper {
+@Mapper(componentModel = "spring")
+public interface CustomerDtoMapper {
 
-  public Customer map(CustomerDto source) {
-    var target = new Customer();
-    target.setUuid(source.getUuid());
-    target.setName(source.getName());
-    target.setBirthdate(source.getBirthdate());
-    target.setState(mapState(source.getState()));
-    return target;
-  }
+  Customer map(CustomerDto source);
 
-  public CustomerState mapState(String state) {
+  default CustomerState mapState(String state) {
     return null == state ? null : switch (state) {
       case "active" -> CustomerState.ACTIVE;
       case "locked" -> CustomerState.LOCKED;
@@ -26,16 +19,9 @@ public class CustomerDtoMapper {
     };
   }
 
-  public CustomerDto map(Customer source) {
-    var target = new CustomerDto();
-    target.setUuid(source.getUuid());
-    target.setName(source.getName());
-    target.setBirthdate(source.getBirthdate());
-    target.setState(mapState(source.getState()));
-    return target;
-  }
+  CustomerDto map(Customer source);
 
-  public String mapState(CustomerState state) {
+  default String mapState(CustomerState state) {
     return null == state ? null : switch (state) {
       case ACTIVE -> "active";
       case LOCKED -> "locked";
